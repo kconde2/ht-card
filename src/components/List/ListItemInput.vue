@@ -1,14 +1,14 @@
 <template>
   <div class="input-form">
-    <input type="text" name="" v-model="color" />
-    <a title="Ajouter un élément à la liste" @click="add">
+    <input type="text" v-model="color" @keyup.enter="add()" />
+    <a title="Ajouter un élément à la liste" @click="add()">
       <a class="plus">+</a></a
     >
   </div>
 </template>
 
 <script>
-import { mapActions, mapStores } from "pinia";
+import { mapActions, mapState } from "pinia";
 import { useListStore } from "../../stores/list";
 
 export default {
@@ -24,19 +24,25 @@ export default {
     },
   },
   computed: {
-    ...mapStores(useListStore),
+    ...mapState(useListStore, ["countList"]),
   },
   methods: {
-    ...mapActions(useListStore, ["addListItem"]),
+    ...mapActions(useListStore, ["addItem"]),
     add() {
       if (!this.isValidColor()) {
-        alert("Invalid color (texte or hexadecimal)");
+        alert(`"${this.color}" Invalid color (texte or hexadecimal)`);
+        this.color = "";
+        return;
+      }
+
+      if (this.countList(this.listId) === 6) {
+        alert("Maximum items size reached : 6");
         return;
       }
 
       const rgba = this.colorValues(this.color);
 
-      this.addListItem(
+      this.addItem(
         this.listId,
         this.rgbaToHex(`rgba(${rgba[0]},${rgba[1]}, ${rgba[2]}, ${rgba[3]})`)
       );
@@ -93,7 +99,7 @@ export default {
   text-align: center;
   font-weight: bold;
   padding: 2px 0 2px 2px;
-  background: green;
+  background: #202123;
   margin-bottom: 10px;
 
   > * {

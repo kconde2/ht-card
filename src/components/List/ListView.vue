@@ -3,7 +3,7 @@
     <list-item-input :list-id="listId"></list-item-input>
     <div
       class="list-items"
-      v-for="listItem in this.listItems(this.listId)"
+      v-for="listItem in listItems(listId)"
       :key="listItem.id"
     >
       <list-item :list-item="listItem"></list-item>
@@ -14,22 +14,18 @@
 <script>
 import ListItemInput from "./ListItemInput.vue";
 import ListItem from "./ListItem.vue";
-import { mapState, mapStores } from "pinia";
+import { mapState } from "pinia";
 import { useListStore } from "../../stores/list";
 
 export default {
   components: { ListItemInput, ListItem },
   computed: {
-    ...mapStores(useListStore),
     ...mapState(useListStore, ["listItems"]),
   },
   props: {
     listId: {
       type: Number,
       required: true,
-    },
-    title: {
-      type: String,
     },
   },
 };
